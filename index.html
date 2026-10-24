@@ -19,7 +19,8 @@ a{color:var(--acc);font-size:13px}
 .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top-in{max-width:1360px;margin:auto;padding:0 24px;display:flex;align-items:center;gap:32px;min-height:56px}
 .logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;letter-spacing:-.025em;white-space:nowrap}
-.logo span{font-weight:500;color:var(--acc)}
+.logo .brand-name{color:var(--ink)}
+.logo .brand-name span{font-weight:500;color:var(--acc)}
 .mark{width:26px;height:26px;color:var(--acc);flex:none}
 .tabs{display:flex;gap:4px;flex:1;min-width:0;align-self:stretch;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -333,7 +334,7 @@ button:active,.chip:active{transform:scale(.97)}
 }
 </style><script>try{var th=localStorage.getItem("cockpit-theme");if(th==="light"||th==="dark")document.documentElement.dataset.theme=th}catch(e){}</script></head><body>
 <header class="top"><div class="top-in">
-<div class="logo"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="7" fill="currentColor"/><path d="M5.5 15.5 10 11l3 2.8 5.5-6" fill="none" stroke="var(--on-acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>ETFCockpit</div>
+<div class="logo"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="7" fill="currentColor"/><path d="M5.5 15.5 10 11l3 2.8 5.5-6" fill="none" stroke="var(--on-acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-name">ETF<span>Cockpit</span></span></div>
 <nav class="tabs" id="tabs" aria-label="Bereiche"></nav>
 <div class="hbtns"><span class="stamp mut" id="stamp"></span><button type="button" class="g icon" id="priv"></button><button type="button" class="g icon" id="reload" aria-label="Kurse neu laden" title="Kurse neu laden"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 5v4h4M4 13a8 8 0 0 0 14.9 3M20 19v-4h-4"/></svg></button><button type="button" class="g icon" id="theme"></button></div><div id="toast" role="status" aria-live="polite"></div>
 </div></header>
