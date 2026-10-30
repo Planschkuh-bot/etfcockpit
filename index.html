@@ -5094,7 +5094,7 @@ async function dbSave(mode='download'){const {name,blob}=dbFile(),st=$('#dbst');
 function mfETFs(){return Object.keys(E||{}).map(i=>({i,n:E[i].name||'Unbekannter ETF'})).sort((a,b)=>a.n<b.n?-1:a.n>b.n?1:0)}
 function mfSuggest(){const p=$('#mfpl');if(!p)return;const q=($('#mfi')?.value||'').trim().toLowerCase(),ls=mfETFs(),row=r=>`<label onpointerdown="event.preventDefault()" onclick="mfPick('${r.i}')" role="button" tabindex="-1"><b>${imEsc(r.n)}</b><span class="mut">${r.i}</span></label>`;
  p.innerHTML=ls.length?ls.filter(r=>!q||r.i.toLowerCase().includes(q)||r.n.toLowerCase().includes(q)).map(row).join('')||'<div class="mempty">Kein Treffer – Eingabe bleibt möglich.</div>':'<div class="mempty">Noch keine ETFs im Depot. Einfach Symbol/ISIN und Name eintragen.</div>'}
-function mfPick(i){const f=$('#mfi');if(f)f.value=i;const n=$('#mfn');if(n)n.value=E[i]?.name||'';const p=S.p?.[i+'|cur'],k=$('#mfp');if(k){if(p!=null&&!isNaN(p))k.value=String((+p).toFixed(2)).replace('.',',');else k.value=''}mfSuggest();mfTotal();if(f)f.focus()}
+function mfPick(i){const f=$('#mfi');if(f)f.value=i;const n=$('#mfn');if(n)n.value=E[i]?.name||'';const p=S.p?.[i+'|cur'],k=$('#mfp');if(k){if(p!=null&&!isNaN(p))k.value=String((+p).toFixed(2)).replace('.',',');else k.value=''}mfSuggest();mfTotal();const q0=$('#mfq'),kc=$('#mfp'),nxt=q0&&!q0.value.trim()?q0:(kc||f);if(nxt)nxt.focus()}
 function mfTotal(){const q=csvN($('#mfq')?.value),pr=csvN($('#mfp')?.value),t=$('#mfb');if(!t)return;t.value=(q>0&&pr>0)?f(q*pr):''}
 function mfList(){const s=$('#mfsum');if(!s)return;const l=S.mft||[];
  s.textContent='Manuell erfasste Transaktionen'+(l.length?' ('+l.length+')':'');
