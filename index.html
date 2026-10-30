@@ -753,7 +753,8 @@ body.ovopen{overflow:hidden}
  table.stk.pos tr:not(.hr):not(.sp) td:nth-child(9){grid-column:3/4}
  table.stk.kur tr:not(.hr):not(.sp) td{font-size:12px}
  table.stk.kur tr:not(.hr):not(.sp) td input,table.stk.kur tr:not(.hr):not(.sp) td select{font-size:12px;line-height:1.2;height:26px;min-height:0;padding:2px 6px;border-radius:6px;width:100%;max-width:100%}
- table.stk.kur tr:not(.hr):not(.sp) td:last-child{grid-column:3/4;align-items:flex-end;text-align:right}
+ table.stk.kur tr:not(.hr):not(.sp) td:first-child{max-width:none}
+ table.stk.kur tr:not(.hr):not(.sp) td:last-child{grid-column:3/4;align-items:flex-end;text-align:right;border-top:0}
 }
 @media(max-width:560px){
  .pnl h3{position:relative}
