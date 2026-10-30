@@ -664,7 +664,7 @@ body.help-open main>:not(#helpPage){display:none!important}
 .ovch{flex:1;min-height:0;display:flex;flex-direction:column}
 .ovch .ch{flex:1;min-height:260px}
 body.ovopen{overflow:hidden}
-@media(max-width:700px){.ov{padding:0}.ovc{height:100%;border-radius:0;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}.ovh .rng{margin-left:0}}
+@media(max-width:700px){.ov{padding:0}.ovc{position:relative;height:100%;border-radius:0;padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}.ovh{padding-right:44px}.ovh .rng{margin-left:0}.ovh .xp{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:12px;margin:0;z-index:2}}
 /* Scrollbalken: Säulendiagramme horizontal, Gewinn und Rendite je ETF vertikal; Auswahl einklappbar; individueller Zeitraum */
 .chs{flex:1;min-height:230px;overflow-x:auto;overflow-y:hidden;display:flex;position:relative;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .chs>.ch{flex:1 0 auto;min-height:230px}
