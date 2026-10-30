@@ -5110,14 +5110,14 @@ async function mfDel(i){const l=S.mft||[];const t=l[i];if(!t)return;if(!await as
 $('#mfi').addEventListener('input',mfSuggest);
 $('#mfq').addEventListener('input',mfTotal);
 $('#mfp').addEventListener('input',mfTotal);
-{const _n=new Date(),_mfd=$('#mfd');if(_mfd&&!_mfd.value)_mfd.value=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0')}
+{const _mfd=$('#mfd');if(_mfd&&!_mfd.value)_mfd.value=todayISO()}
 function mfAdd(){if(S.dep==='all'){$('#mst').textContent='Bitte zuerst oben ein einzelnes Depot wählen.';return}const g=id=>$('#'+id).value.trim(),st=$('#mst'),isin=g('mfi').toUpperCase().replace(/\s/g,''),q=csvN(g('mfq')),pr=csvN(g('mfp')),d=g('mfd'),sell=g('mfa')==='Verkauf';let name=g('mfn').replace(/;/g,',');
  if(!name&&E[isin])name=E[isin].name;
  const bad=!isin||isin.includes(';')?'Bitte Symbol/ISIN angeben.':!name?'Bitte einen Namen für den neuen ETF angeben.':!(q>0)?'Bitte eine Stückzahl größer 0 angeben.':!(pr>0)?'Bitte einen Kurs je Stück größer 0 angeben.':!d?'Bitte ein Datum wählen.':'';
  if(bad){st.textContent=bad;return}
  const txt=(S.csv||'').replace(/^\uFEFF/,'').trimEnd(),H=txt?txt.split(/\r?\n/)[0].split(';'):['Symbol','Name','Kaufpreis','Stueckzahl','Kaufdatum','Art'],row=H.map(()=>''),put=(n,v)=>{const k=H.indexOf(n);if(k>=0)row[k]=v},c=x=>String(x).replace('.',','),dd=d.split('-').reverse().join('.');
  put('Symbol',isin);put('Name',name);put('Kaufpreis',c(pr));put('Stueckzahl',c(q));put('Kaufdatum',dd);put('Art',sell?'Verkauf':'Kauf');
- const isNew=!E[isin];S.csv=(txt||H.join(';'))+'\n'+row.join(';');S.mft??=[];S.mft.push({d:dd,art:sell?'Verkauf':'Kauf',isin,name,q,pr,ts:Date.now(),line:row.join(';')});S.dirty=true;save();init();$('#mfa').value='Kauf';$('#mfd').value='';const _fi=$('#mfi'),_fn=$('#mfn');if(_fi)_fi.value='';if(_fn)_fn.value='';$('#mfq').value='';$('#mfp').value='';mfSuggest();mfTotal();
+ const isNew=!E[isin];S.csv=(txt||H.join(';'))+'\n'+row.join(';');S.mft??=[];S.mft.push({d:dd,art:sell?'Verkauf':'Kauf',isin,name,q,pr,ts:Date.now(),line:row.join(';')});S.dirty=true;save();init();$('#mfa').value='Kauf';$('#mfd').value=todayISO();const _fi=$('#mfi'),_fn=$('#mfn');if(_fi)_fi.value='';if(_fn)_fn.value='';$('#mfq').value='';$('#mfp').value='';mfSuggest();mfTotal();
  toast((sell?'Verkauf':'Kauf')+' gespeichert: '+c(q)+' × '+name+' am '+dd,3200);if(isNew)reloadPrices()}
 function bkImport(el){const f=el.files[0];el.value='';if(!f)return;const r=new FileReader();r.onload=async()=>{try{const j=JSON.parse(r.result);if(j.app!=='etf-cockpit'||typeof j.S!=='object'||!j.S)throw 0;if(!await askConfirm('Alle Daten auf diesem Gerät durch die Sicherung ersetzen?','Ersetzen',true))return;S=j.S;S.snapM=JSON.parse(JSON.stringify({csv:S.csv||'',sales:S.sales||[],mft:S.mft||[],t:S.t||{},ter:S.ter||{},tf:S.tf||{},dist:S.dist||{},bz:S.bz||{},ki:S.ki??null}));S.snapP=JSON.stringify({p:S.p||{},d:S.d||{},dv:S.dv||{}});S.dirty=false;save();init();dbDirty();setTab('cockpit')}catch(e){alert('Das ist keine gültige Cockpit-Sicherung.')}};r.readAsText(f,'utf-8')}
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
