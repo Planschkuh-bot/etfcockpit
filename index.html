@@ -747,8 +747,9 @@ body.ovopen{overflow:hidden}
  table.stk tr:not(.hr):not(.sp) td[data-l]::before{font-size:10.5px;line-height:1.3;letter-spacing:.02em;max-width:100%}
  table.stk tr:not(.hr):not(.sp) td:first-child{grid-column:1/-1;display:block;width:100%;padding:0 0 7px;margin:0 0 2px;border-top:0;border-bottom:1px solid var(--line);font-size:13.5px;white-space:normal}
  table.stk td input:not([type=checkbox]){max-width:100%;width:100%}
- table.stk tr:not(.hr):not(.sp) td:empty{display:none}
+ table.stk tbody tr:not(.hr):not(.sp) td:empty{display:none}
  table.stk tr.sp{padding:8px 10px}
+ table.stk tfoot td:empty::before{content:none}
  table.stk.pos tr:not(.hr):not(.sp) td:nth-child(8){grid-column:1/3}
  table.stk.pos tr:not(.hr):not(.sp) td:nth-child(8)>span:first-child{font-weight:600}
  table.stk.pos tr:not(.hr):not(.sp) td.wgt .bt{width:100%;margin:6px 0 0;display:block}
