@@ -1,6 +1,6 @@
 // Service-Worker für das ETF-Cockpit.
 // Bei einer neuen Version von index.html: VERSION hochzählen (z. B. 'v2').
-const VERSION = 'v54';
+const VERSION = 'v64';
 const CACHE = 'etf-cockpit-' + VERSION;
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
