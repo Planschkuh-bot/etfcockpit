@@ -5036,7 +5036,22 @@ function purgeLegacyDemo(){const bad=Object.keys(S.demoP||{}).filter(k=>!k.start
  for(const i of bad){for(const o of [S.p,S.d,S.dv])for(const k of Object.keys(o||{}))if(k.startsWith(i+'|'))delete o[k];for(const o of [S.pc,S.ls])if(o)delete o[i];delete DP[i];if(S.t&&S.t[i]==='DEMO')delete S.t[i];if(S.ter&&LEGACY_DEMO_TER[i]!=null&&S.ter[i]===LEGACY_DEMO_TER[i])delete S.ter[i];delete S.demoP[i]}
  if((S.depots||[]).some(d=>d.id==='demo')&&!(S.dpd?.demo?.csv||'').includes('DEMO-')){S.depots=S.depots.filter(d=>d.id!=='demo');if(S.dpd)delete S.dpd.demo;if(S.dep==='demo'){S.dep=S.depots[0].id;depLoad(S.dep)}}
  save();try{localStorage.setItem('cockpit-daily',JSON.stringify(DP))}catch(e){}return bad.length>0}
-function init(){depEnsure();const _pg=purgeLegacyDemo();if(/DEMO-IE00BD45KH83|DEMO-IE000CVUM3N6/.test(S.dpd?.demo?.csv||'')||(S.dpd?.demo&&S.demoV!==DEMO_VER))demoLoad(true);E={};W=[];OVERF=[];ARTBAD=[];if(S.dep==='demo')W.push('Demo-Depot: Transaktionen und Kurse sind frei erfunden und dienen nur zum Ausprobieren.');if(!S.csv&&!depVirt())return render();
+function csvDpRestore(){
+ /* Tageskurse aus gesichertem CSV-Import in die lokale Tageskurs-Reihe einspielen (z. B. nach dem Einlesen einer Sicherung auf einem anderen Gerät).
+    CSV-Kurse haben im Dateizeitraum Vorrang; vorhandene Kurse außerhalb (z. B. von Yahoo) bleiben erhalten. */
+ try{let ch=false;
+  for(const i in (S.cs||{})){const c=S.cs[i];
+   if(!(c&&Array.isArray(c.x)&&Array.isArray(c.y)&&c.x.length&&c.x.length===c.y.length))continue;
+   const old=DP[i],m=new Map();
+   if(old&&Array.isArray(old.t)&&Array.isArray(old.p))old.t.forEach((d,k)=>{if(old.p[k]>0)m.set(d,old.p[k])});
+   c.x.forEach((d,k)=>{const v=+c.y[k];if(v>0)m.set(d,v)});
+   const days=[...m.keys()].sort((a,b)=>a-b);
+   if(!days.length)continue;
+   const prices=days.map(d=>+m.get(d).toFixed(4));
+   const same=old&&old.t&&old.t.length===days.length&&old.t[0]===days[0]&&old.t[old.t.length-1]===days[days.length-1]&&old.p.every((v,k)=>v===prices[k]);
+   if(!same){DP[i]={t:days,p:prices};ch=true}}
+  if(ch)localStorage.setItem('cockpit-daily',JSON.stringify(DP))}catch(e){}}
+function init(){depEnsure();csvDpRestore();const _pg=purgeLegacyDemo();if(/DEMO-IE00BD45KH83|DEMO-IE000CVUM3N6/.test(S.dpd?.demo?.csv||'')||(S.dpd?.demo&&S.demoV!==DEMO_VER))demoLoad(true);E={};W=[];OVERF=[];ARTBAD=[];if(S.dep==='demo')W.push('Demo-Depot: Transaktionen und Kurse sind frei erfunden und dienen nur zum Ausprobieren.');if(!S.csv&&!depVirt())return render();
  const rows=depVirt()?allRows():parse(S.csv);if(BAD)W.push(BAD+' Zeilen ohne lesbares Datum wurden übersprungen.');if(ARTBAD.length)W.push('Unbekannte Art in der Transaktionsdatei: '+ARTBAD.map(x=>'„'+escH(x)+'“').join(', ')+' – als Kauf gewertet. Erlaubt sind Kauf, Verkauf, Einlieferung und Auslieferung.');rows.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.sell?1:0)-(b.sell?1:0));
  for(const r of rows){const e=E[r.isin]??={name:r.name,lots:[],transactions:[]},ak=r.kind==='in'?(r.pr>0?r.pr:(r.mv>0?r.mv:0)):r.pr,transaction={d:r.d,q:r.q,pr:ak,kind:r.kind,sell:r.sell,src:r.src};
   if(!r.sell){transaction.openQ=r.q;e.transactions.push(transaction);e.lots.push({d:r.d,pr:ak,q:r.q,q0:r.q,ev:[],kind:r.kind,mv:r.mv,transaction});continue}
