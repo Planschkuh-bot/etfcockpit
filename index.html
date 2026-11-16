@@ -4803,7 +4803,7 @@ S.bz={2018:.87,2019:.52,2020:.07,2021:-.45,2022:-.05,2023:2.55,2024:2.29,2025:2.
 if(S.vapCurrent===false&&!S.vapSet)S.vapCurrent=true;
 const FB={cur:{}};let APPROX={};
 const save=()=>{const bak={};for(const i in FB.cur){const k=i+'|cur';if(S.p&&S.p[k]===FB.cur[i]){bak[k]=S.p[k];delete S.p[k]}}try{localStorage.setItem('cockpit',JSON.stringify(S))}catch(e){}Object.assign(S.p||{},bak)};
-const set=(o,k,v)=>{o[k]=v;S.dirty=true;save();render()};
+const set=(o,k,v)=>{o[k]=v;S.dirty=true;save();rerenderKeepScroll()};
 function setVf(i,y,raw){const k=i+'|'+y+'f',t=String(raw).trim().replace(',','.');S.p??={};if(t===''){delete S.p[k]}else{const n=parseFloat(t);if(!isFinite(n)||n<0){toast('Bitte einen Wert von 0 oder größer eintragen.');render();return}S.p[k]=n}S.dirty=true;save();render()}
 function csvSplit(line,d){const out=[];let cur='',q=false;for(let k=0;k<line.length;k++){const c=line[k];if(c==='"'){if(q&&line[k+1]==='"'){cur+='"';k++}else q=!q}else if(c===d&&!q){out.push(cur);cur=''}else cur+=c}out.push(cur);return out.map(x=>x.trim())}
 function csvDate(x,us){x=String(x||'').trim().replace(/^"|"$/g,'');let m;
@@ -5789,22 +5789,22 @@ const setPctDepot=p=>set(S,'amt',TV>0?Math.max(0,Math.min(TV,Math.round(TV*clamp
 function gainOf(i,amt){const r=RR.find(x=>x.i===i);if(!r||!r.pr)return null;let left=Math.min(amt/r.pr,r.q),c=0,vp=0;const sh=left;
  for(const l of E[i].lots){if(left<=1e-9)break;const t=Math.min(l.q,left);left-=t;c+=t*l.pr;vp+=t*lotVap(i,l)}
  const er=sh*r.pr,gw=er-c-vp;return{er,c,vp,gw,sp:gw*(1-tfd(i)/100),sh}}
-function applySplit(m){const held=RR.filter(r=>r.q>1e-9);for(const r of held)if(!(r.i in m))m[r.i]=0;const e=Object.entries(m);if(!e.length){save();return render()}
+function applySplit(m){const held=RR.filter(r=>r.q>1e-9);for(const r of held)if(!(r.i in m))m[r.i]=0;const e=Object.entries(m);if(!e.length){save();return rerenderKeepScroll()}
  let t=0;S.pct={};
  for(const [i,p] of e){S.pct[i]=p;t+=S.pct[i]}
- const big=e.sort((a,b)=>b[1]-a[1])[0][0];S.pct[big]=S.pct[big]+100-t;save();render()}
+ const big=e.sort((a,b)=>b[1]-a[1])[0][0];S.pct[big]=S.pct[big]+100-t;save();rerenderKeepScroll()}
 function updatePct(i,v){const active=RR.filter(r=>!S.off?.[r.i]&&r.q>1e-9);if(!active.some(r=>r.i===i))return;const target=Math.max(0,Math.min(100,Number.isFinite(v)?v:0));
- if(S.pind){S.pct[i]=target;save();render();return}
+ if(S.pind){S.pct[i]=target;save();rerenderKeepScroll();return}
  const m={};active.forEach(r=>m[r.i]=S.pct[r.i]??+((TV&&r.v?r.v/TV*100:0).toFixed(1)));let peers=active.filter(r=>r.i!==i).map(r=>r.i),diff=100-target-peers.reduce((a,k)=>a+m[k],0);m[i]=target;while(peers.length&&Math.abs(diff)>1e-9){const share=diff/peers.length,next=[];for(const k of peers){const p=Math.max(0,Math.min(100,m[k]+share));diff-=p-m[k];m[k]=p;if(p>1e-9&&p<100-1e-9)next.push(k)}if(next.length===peers.length)break;peers=next}applySplit(m)}
-function setPind(on){S.pind=!!on;save();render()}
+function setPind(on){S.pind=!!on;save();rerenderKeepScroll()}
 function setRowAmt(i,raw){const r=RR.find(x=>x.i===i);if(!r||!(r.q>1e-9))return;
  const t=String(raw).trim();let n=0;
- if(t!==''){n=parseFloat(t.replace(/\./g,'').replace(',','.'));if(!isFinite(n)||n<0){toast('Bitte einen Betrag ab 0 € eintragen.');render();return}}
- if(!(S.amt>0)){toast('Bitte zuerst oben einen Verkaufsbetrag eintragen.');render();return}
+ if(t!==''){n=parseFloat(t.replace(/\./g,'').replace(',','.'));if(!isFinite(n)||n<0){toast('Bitte einen Betrag ab 0 € eintragen.');rerenderKeepScroll();return}}
+ if(!(S.amt>0)){toast('Bitte zuerst oben einen Verkaufsbetrag eintragen.');rerenderKeepScroll();return}
  const maxAmt=r.pr?r.q*r.pr:0;if(maxAmt&&n>maxAmt+.5){n=maxAmt;toast('Höchstens '+eur0(maxAmt)+' lassen sich von diesem ETF verkaufen.')}
  if(S.off?.[i])delete S.off[i];
  updatePct(i,Math.min(100,n/S.amt*100))}
-function editRowAmt(i){ROWEDIT=i;render();setTimeout(()=>{const el=document.querySelector('input.rowamt');if(el){el.focus();el.select()}},20)}
+function editRowAmt(i){ROWEDIT=i;rerenderKeepScroll();setTimeout(()=>{const el=document.querySelector('input.rowamt');if(el){el.focus({preventScroll:true});el.select()}},20)}
 function commitRowAmt(i,raw){if(ROWEDIT!==i)return;ROWEDIT=null;setRowAmt(i,raw)}
 function splitProp(){const m={};let t=0,v=0;RR.forEach(r=>{m[r.i]=S.off?.[r.i]?0:(TV&&r.v?r.v/TV*100:0);t+=m[r.i];if(!S.off?.[r.i]&&r.pr)v+=r.q*r.pr});if(t)for(const k in m)m[k]=m[k]/t*100;if(v&&Math.abs(S.amt-v)<.5)S.amt=Math.floor(v+1e-9);applySplit(m)}
 function splitOpt(sg){const A=S.amt,N=200,st=A/N,ids=RR.filter(r=>r.pr&&r.q>0&&!S.off?.[r.i]).map(r=>r.i);if(!A||!ids.length)return;
@@ -5823,21 +5823,21 @@ function splitOpt(sg){const A=S.amt,N=200,st=A/N,ids=RR.filter(r=>r.pr&&r.q>0&&!
  const m={};ids.forEach((i,j)=>m[i]=ks[j]/N*100);applySplit(m)}
 const nm=i=>`<input type="checkbox" ${S.off?.[i]?'':'checked'} onchange="toggleEtf('${i}',this.checked)"> ${etfDot(i)}${E[i].name}`;
 function toggleEtf(i,on){S.off??={};if(on)delete S.off[i];else S.off[i]=1;
- const held=RR.filter(r=>r.q>1e-9);if(!held.some(r=>r.i===i)||!held.length){save();return render()}
- if(S.pind){if(on&&S.pct[i]===undefined)S.pct[i]=TV&&RR.find(r=>r.i===i)?.v?RR.find(r=>r.i===i).v/TV*100:0;save();return render()}
+ const held=RR.filter(r=>r.q>1e-9);if(!held.some(r=>r.i===i)||!held.length){save();return rerenderKeepScroll()}
+ if(S.pind){if(on&&S.pct[i]===undefined)S.pct[i]=TV&&RR.find(r=>r.i===i)?.v?RR.find(r=>r.i===i).v/TV*100:0;save();return rerenderKeepScroll()}
  const m={};let t=0;
  for(const r of held){if(S.off[r.i]){m[r.i]=0;continue}const w=TV&&r.v?r.v/TV*100:0;
   const b=(r.i===i&&on)||S.pct[r.i]===undefined?w:S.pct[r.i];m[r.i]=b;t+=b}
  if(!t)for(const r of held)if(!S.off[r.i])t+=m[r.i]=1;
- if(t)for(const k in m)m[k]=m[k]/t*100;S.pct=m;save();render()}
+ if(t)for(const k in m)m[k]=m[k]/t*100;S.pct=m;save();rerenderKeepScroll()}
 function toggleAllEtf(on){const held=RR.filter(r=>r.q>1e-9);S.off??={};
- if(!held.length){save();return render()}
+ if(!held.length){save();return rerenderKeepScroll()}
  if(on){for(const r of held)delete S.off[r.i];
   if(S.pind){for(const r of held)if(S.pct[r.i]===undefined)S.pct[r.i]=TV&&r.v?r.v/TV*100:0}
   else{const m={};let t=0;for(const r of held){m[r.i]=S.pct[r.i]??(TV&&r.v?r.v/TV*100:0);t+=m[r.i]}
    if(t>1e-9)for(const k in m)m[k]=m[k]/t*100;else for(const k in m)m[k]=100/held.length;S.pct=m}}
  else for(const r of held)S.off[r.i]=1;
- save();render()}
+ save();rerenderKeepScroll()}
 const stepAmt=d=>setAmt(Math.round((S.amt||0)+d));
 const stepPct=d=>setPctDepot(Math.max(0,Math.round((((TV?S.amt/TV*100:0)+d))*10)/10));
 const pctCell=(i,p)=>{const d=S.off?.[i]?' disabled':'';return `<div class="pcell"><div class="stp"><button type="button" class="g" aria-label="1 Prozentpunkt weniger" onclick="updatePct('${i}',${+(p-1).toFixed(2)})"${d}>−</button><input type="text" inputmode="decimal" autocomplete="off" value="${f(+p,2)}"${d} aria-label="Anteil in Prozent" onchange="updatePct('${i}',num(this.value))"><button type="button" class="g" aria-label="1 Prozentpunkt mehr" onclick="updatePct('${i}',${+(p+1).toFixed(2)})"${d}>+</button></div></div>`};
