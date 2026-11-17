@@ -5203,7 +5203,7 @@ const COIN=new Set(['BTC','ETH','SOL','XRP','ADA','DOGE','DOT','LTC','BCH','XLM'
 const isCoin=i=>/-(EUR|USD|GBP|USDT|USDC|BTC|ETH)$/.test(S.t?.[i]||'')||COIN.has(String(i||'').toUpperCase());
 const TYL={fonds:'ETF/Fonds',aktie:'Aktie',krypto:'Krypto',etc:'ETC/Gold'};
 const splitApplies=i=>{const t=ptype(i);return t==='fonds'||t==='aktie'};
-const ptype=i=>{const o=S.ty?.[i];if(o&&TYL[o])return o;if(isCoin(i))return'krypto';const y=S.yt?.[i];if(y==='CRYPTOCURRENCY')return'krypto';if(y==='EQUITY')return'aktie';if(/\bETC\b|physical (gold|silver|platin|palladium)|xetra-gold/i.test(E[i]?.name0||E[i]?.name||''))return'etc';return'fonds'};
+const ptype=i=>{const o=S.ty?.[i];if(o&&TYL[o])return o;if(isCoin(i))return'krypto';const y=S.yt?.[i];if(y==='CRYPTOCURRENCY')return'krypto';if(y==='EQUITY')return'aktie';if(y==='FUTURE'||/=F$/i.test(S.t?.[i]||''))return'etc';if(/\bETC\b|physical (gold|silver|platin|palladium)|xetra-gold/i.test(E[i]?.name0||E[i]?.name||''))return'etc';return'fonds'};
 const noVap=i=>ptype(i)!=='fonds';
 const tfd=i=>S.tf[i]??(noVap(i)?0:/bond|treasury|anleihe/i.test(E[i].name0||E[i].name)?0:30);
 const vdf=i=>{const base=dvYearPS(i,cy),cur=S.dv?.[i+'|'+cy],prev=S.dv?.[i+'|'+(cy-1)];if(!Array.isArray(prev)&&!Object.keys(S.dvf||{}).some(k=>k.startsWith(i+'|'+cy+'|')))return base;const cq=Math.floor(new Date().getMonth()/3)+1,qs=(ev,q)=>Array.isArray(ev)?ev.filter(d=>Math.floor((+d.date.slice(5,7)-1)/3)+1===q).reduce((a,d)=>a+dvAmt(i,d.date,d.amount),0):0,man=q=>{const o=S.dvf?.[i+'|'+cy+'|'+q];return o==null||o===''||!Number.isFinite(+o)?null:+o};let extra=0;for(let q=cq;q<=4;q++){const paid=qs(cur,q),m=man(q);if(m==null&&!Array.isArray(cur)&&q===cq)continue;extra+=Math.max(0,(m==null?qs(prev,q):m)-paid)}return base+extra};
