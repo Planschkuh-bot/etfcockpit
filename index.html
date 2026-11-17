@@ -4810,9 +4810,8 @@ const $=s=>document.querySelector(s),num=s=>parseFloat(String(s).replace(',','.'
 const f=(x,d=2)=>x==null||isNaN(x)?'–':x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
 const eur=x=>f(x)+' €',eur0=x=>f(x,0)+' €',cl=x=>x>=0?'pos':'neg';
 let S={};try{S=JSON.parse(localStorage.getItem('cockpit')||'{}')}catch(e){}
-S.t??={};S.cs??={};S.p??={};S.d??={};S.dvo??={};S.dvf??={};S.ddt??={};S.tf??={};S.ty??={};S.yt??={};S.ym??={};S.pct??={};S.ter??={};S.dist??={};S.px||='https://etf-kurse.swr-entnahmesimulator.workers.dev/?u={url}';S.ki??=0;S.amt??=10000;
-S.bz={2018:.87,2019:.52,2020:.07,2021:-.45,2022:-.05,2023:2.55,2024:2.29,2025:2.53,2026:3.2,...(S.bz||{})};
-if(S.vapCurrent===false&&!S.vapSet)S.vapCurrent=true;
+function stateDefaults(){S.t??={};S.cs??={};S.p??={};S.d??={};S.dvo??={};S.dvf??={};S.ddt??={};S.tf??={};S.ty??={};S.yt??={};S.ym??={};S.pct??={};S.ter??={};S.dist??={};S.px||='https://etf-kurse.swr-entnahmesimulator.workers.dev/?u={url}';S.ki??=0;S.amt??=10000;S.bz={2018:.87,2019:.52,2020:.07,2021:-.45,2022:-.05,2023:2.55,2024:2.29,2025:2.53,2026:3.2,...(S.bz||{})};if(S.vapCurrent===false&&!S.vapSet)S.vapCurrent=true;}
+stateDefaults();
 const FB={cur:{}};let APPROX={};
 const save=()=>{const bak={};for(const i in FB.cur){const k=i+'|cur';if(S.p&&S.p[k]===FB.cur[i]){bak[k]=S.p[k];delete S.p[k]}}try{localStorage.setItem('cockpit',JSON.stringify(S))}catch(e){}Object.assign(S.p||{},bak)};
 const set=(o,k,v)=>{o[k]=v;S.dirty=true;save();rerenderKeepScroll()};
@@ -6236,7 +6235,7 @@ function mfAdd(){if(depVirt()){$('#mst').textContent='Bitte zuerst oben ein einz
  put('Symbol',isin);put('Name',name);put('Kaufpreis',pr>0?c(pr):'');put('Stueckzahl',c(q));put('Kaufdatum',dd);put('Art',TYPS[kind]);
  const isNew=!E[isin];S.csv=(txt||H.join(';'))+'\n'+row.join(';');S.mft??=[];S.mft.push({d:dd,art:TYPS[kind],isin,name,q,pr,ts:Date.now(),line:row.join(';')});S.dirty=true;save();init();$('#mfa').value='Kauf';$('#mfd').value=todayISO();const _fi=$('#mfi'),_fn=$('#mfn');if(_fi)_fi.value='';if(_fn)_fn.value='';$('#mfq').value='';$('#mfp').value='';mfSuggest();mfTotal();
  toast(TYPS[kind]+' gespeichert: '+c(q)+' × '+name+' am '+dd+(kind==='in'&&!(pr>0)?' – ohne Einstandskurs':'')+(isXfer(kind)?' (Ein-/Auslieferung, kein Zahlungsfluss)':''),3600);if(isNew)reloadPrices()}
-function bkImport(el){const f=el.files[0];el.value='';if(!f)return;const r=new FileReader();r.onload=async()=>{try{const j=JSON.parse(r.result);if(j.app!=='etf-cockpit'||typeof j.S!=='object'||!j.S)throw 0;if(!await askConfirm('Alle Daten auf diesem Gerät durch die Sicherung ersetzen?','Ersetzen',true))return;S=j.S;S.snapM=JSON.parse(JSON.stringify({csv:S.csv||'',sales:S.sales||[],mft:S.mft||[],t:S.t||{},ter:S.ter||{},tf:S.tf||{},dist:S.dist||{},bz:S.bz||{},ki:S.ki??null,nm:S.nm||{}}));S.snapP=JSON.stringify({p:S.p||{},d:S.d||{},dv:S.dv||{},dvo:S.dvo||{},dvf:S.dvf||{},ddt:S.ddt||{}});S.dirty=false;save();init();dbDirty();setTab('cockpit')}catch(e){alert('Das ist keine gültige Cockpit-Sicherung.')}};r.readAsText(f,'utf-8')}
+function bkImport(el){const f=el.files[0];el.value='';if(!f)return;const r=new FileReader();r.onload=async()=>{try{const j=JSON.parse(r.result);if(j.app!=='etf-cockpit'||typeof j.S!=='object'||!j.S)throw 0;if(!await askConfirm('Alle Daten auf diesem Gerät durch die Sicherung ersetzen?','Ersetzen',true))return;S=j.S;stateDefaults();S.snapM=JSON.parse(JSON.stringify({csv:S.csv||'',sales:S.sales||[],mft:S.mft||[],t:S.t||{},ter:S.ter||{},tf:S.tf||{},dist:S.dist||{},bz:S.bz||{},ki:S.ki??null,nm:S.nm||{}}));S.snapP=JSON.stringify({p:S.p||{},d:S.d||{},dv:S.dv||{},dvo:S.dvo||{},dvf:S.dvf||{},ddt:S.ddt||{}});S.dirty=false;save();init();dbDirty();setTab('cockpit')}catch(e){alert('Das ist keine gültige Cockpit-Sicherung.')}};r.readAsText(f,'utf-8')}
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 
 document.body.insertAdjacentHTML('beforeend','<div id="itip" role="tooltip"></div>');
